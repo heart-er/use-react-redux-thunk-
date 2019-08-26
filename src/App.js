@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React,{Component} from 'react';
+import {Provider,connect} from 'react-redux'
+import {createStore,applyMiddleware} from 'redux'
+import thunkMiddleware from 'redux-thunk'
+import {reducer} from './reducers/reducer'
+import Item from './components/Item'
+import {fetchItem} from './actions/action'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const store=createStore(reducer,applyMiddleware(thunkMiddleware))
+
+const ReduxItem=connect(mapStateToProps)(Item)
+
+class App extends Component{
+
+  componentDidMount(){
+    
+    store.dispatch(fetchItem())
+    
+    store.subscribe(()=>{
+      console.log(store.getState())
+    })
+  }
+
+  
+
+  render(){
+    return (
+      <Provider store={store}>
+        <ReduxItem />
+      </Provider>
+      
+    )
+  }
 }
+
+function mapStateToProps(state){
+  return state
+}
+
+
 
 export default App;
